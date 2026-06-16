@@ -29,6 +29,17 @@ function buildContextFallback(chunks: KnowledgeChunk[], phone?: string | null) {
     .join(" ");
 }
 
+function isModelIdentityQuestion(message: string) {
+  return /\b(llm|language model|ai model|chatbot model|model name|which model|what model)\b/i.test(message);
+}
+
+function buildModelIdentityAnswer(chunks: KnowledgeChunk[]) {
+  const hasModelInfo = chunks.some((chunk) => chunk.content.toLowerCase().includes("gemini-2.0-flash"));
+  if (!hasModelInfo) return null;
+
+  return "This chatbot uses Google's Gemini AI models. Chat model: gemini-2.0-flash. Embedding model: gemini-embedding-001.";
+}
+
 export async function POST(request: Request) {
   const payload = chatSchema.parse(await request.json());
   const supabase = createAdminClient();
@@ -84,11 +95,15 @@ export async function POST(request: Request) {
   let answer = chunks.length > 0 ? "" : (settings?.fallback_message as string) || FALLBACK_MESSAGE;
 
   if (chunks.length > 0) {
-    try {
-      answer = await generateRagAnswer({ question: payload.message, chunks });
-    } catch (error) {
-      console.error("RAG answer generation failed", error);
-      answer = buildContextFallback(chunks, restaurant.phone as string | null);
+    answer = isModelIdentityQuestion(payload.message) ? buildModelIdentityAnswer(chunks) ?? "" : "";
+
+    if (!answer) {
+      try {
+        answer = await generateRagAnswer({ question: payload.message, chunks });
+      } catch (error) {
+        console.error("RAG answer generation failed", error);
+        answer = buildContextFallback(chunks, restaurant.phone as string | null);
+      }
     }
   }
 
