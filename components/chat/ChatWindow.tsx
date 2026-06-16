@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { Moon, Plus, Sun } from "lucide-react";
+import { Menu, Moon, Plus, Sun, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FOODS_INN_DEMO } from "@/lib/utils/constants";
@@ -60,6 +60,7 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState<Theme>("light");
+  const [sessionMenuOpen, setSessionMenuOpen] = useState(false);
 
   const activeSession = sessions.find((session) => session.localId === activeSessionId) ?? sessions[0];
 
@@ -106,6 +107,7 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
     const session = createSession();
     setSessions((current) => [session, ...current]);
     setActiveSessionId(session.localId);
+    setSessionMenuOpen(false);
   }
 
   async function send(message: string) {
@@ -156,8 +158,22 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
   }
 
   return (
-    <Card className="mx-auto grid h-dvh w-full max-w-6xl overflow-hidden rounded-none border-0 md:h-[min(820px,calc(100vh-2rem))] md:grid-cols-[280px_1fr] md:rounded-lg md:border">
-      <aside className="flex min-h-0 flex-col border-b bg-primary p-2 text-primary-foreground md:border-b-0 md:border-r md:p-3">
+    <Card className="relative mx-auto grid h-dvh w-full max-w-6xl overflow-hidden rounded-none border-0 md:h-[min(820px,calc(100vh-2rem))] md:grid-cols-[280px_1fr] md:rounded-lg md:border">
+      {sessionMenuOpen ? (
+        <button
+          type="button"
+          aria-label="Close chat sessions"
+          className="absolute inset-0 z-20 bg-black/35 md:hidden"
+          onClick={() => setSessionMenuOpen(false)}
+        />
+      ) : null}
+
+      <aside
+        className={cn(
+          "absolute inset-y-0 left-0 z-30 flex w-[82vw] max-w-[320px] min-h-0 flex-col bg-primary p-3 text-primary-foreground shadow-2xl transition-transform duration-200 md:static md:z-auto md:w-auto md:max-w-none md:translate-x-0 md:border-r md:shadow-none",
+          sessionMenuOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
         <div className="flex items-center gap-2 px-1 py-1 md:px-2 md:py-2">
           <Image
             src="/foods-inn-logo.webp"
@@ -170,6 +186,16 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
             <h1 className="truncate text-sm font-semibold">{FOODS_INN_DEMO.name}</h1>
             <p className="text-xs text-primary-foreground/75">AI chatbot</p>
           </div>
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon"
+            aria-label="Close chat sessions"
+            onClick={() => setSessionMenuOpen(false)}
+            className="ml-auto h-9 w-9 md:hidden"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
 
         <div className="mt-2 flex gap-2 md:mt-3">
@@ -189,14 +215,17 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
           </Button>
         </div>
 
-        <div className="mt-2 flex gap-2 overflow-x-auto pb-1 md:mt-4 md:min-h-0 md:flex-1 md:flex-col md:overflow-y-auto md:overflow-x-hidden">
+        <div className="mt-4 min-h-0 flex-1 space-y-2 overflow-y-auto">
           {sessions.map((session) => (
             <button
               key={session.localId}
               type="button"
-              onClick={() => setActiveSessionId(session.localId)}
+              onClick={() => {
+                setActiveSessionId(session.localId);
+                setSessionMenuOpen(false);
+              }}
               className={cn(
-                "min-w-40 rounded-md px-3 py-2 text-left text-sm transition md:min-w-0",
+                "w-full rounded-md px-3 py-2 text-left text-sm transition",
                 session.localId === activeSession?.localId
                   ? "bg-primary-foreground text-primary"
                   : "text-primary-foreground hover:bg-primary-foreground/10"
@@ -212,9 +241,31 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
       </aside>
 
       <section className="flex min-h-0 flex-col bg-background">
-        <div className="border-b bg-card px-3 py-2 md:px-4 md:py-3">
-          <h2 className="text-base font-semibold">{activeSession?.title ?? "New chat"}</h2>
-          <p className="text-sm text-muted-foreground">{FOODS_INN_DEMO.phone} - {FOODS_INN_DEMO.city}</p>
+        <div className="flex items-center gap-2 border-b bg-card px-3 py-2 md:px-4 md:py-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Open previous chat sessions"
+            onClick={() => setSessionMenuOpen(true)}
+            className="h-9 w-9 shrink-0 md:hidden"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-base font-semibold">{activeSession?.title ?? "New chat"}</h2>
+            <p className="truncate text-sm text-muted-foreground">{FOODS_INN_DEMO.phone} - {FOODS_INN_DEMO.city}</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={() => setTheme((current) => (current === "dark" ? "light" : "dark"))}
+            className="h-9 w-9 shrink-0 md:hidden"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto p-3 md:p-4">
