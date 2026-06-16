@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 38 33% 97%;
+  --foreground: 120 7% 16%;
+  --card: 0 0% 100%;
+  --card-foreground: 120 7% 16%;
+  --primary: 120 7% 36%;
+  --primary-foreground: 19 45% 71%;
+  --muted: 23 43% 91%;
+  --muted-foreground: 120 6% 36%;
+  --border: 23 30% 78%;
+  --input: 23 30% 78%;
+  --ring: 31 43% 60%;
+}
+
+.dark {
+  --background: 120 8% 10%;
+  --foreground: 23 43% 89%;
+  --card: 120 7% 14%;
+  --card-foreground: 23 43% 89%;
+  --primary: 19 45% 71%;
+  --primary-foreground: 120 7% 16%;
+  --muted: 120 7% 20%;
+  --muted-foreground: 23 24% 72%;
+  --border: 120 7% 28%;
+  --input: 120 7% 28%;
+  --ring: 31 43% 60%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: Poppins, Arial, sans-serif;
+}
+
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+}
