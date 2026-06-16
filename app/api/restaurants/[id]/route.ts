@@ -17,7 +17,7 @@ export async function PATCH(request: Request, { params }: Params) {
   const { id } = await params;
   const supabase = await createServerSupabaseClient();
   const payload = restaurantSchema.partial().parse(await request.json());
-  const { data, error } = await supabase.from("restaurants").update(payload).eq("id", id).select("*").single();
+  const { data, error } = await supabase.from("restaurants").update(payload as never).eq("id", id).select("*").single();
   if (error) return jsonError(error.message, 500);
   return NextResponse.json(data);
 }

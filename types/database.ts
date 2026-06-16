@@ -149,26 +149,36 @@ export type ChatbotSettings = {
   updated_at: string;
 };
 
+type SupabaseTable<Row, Insert = Partial<Row>, Update = Partial<Row>> = {
+  Row: Row & Record<string, unknown>;
+  Insert: Insert & Record<string, unknown>;
+  Update: Update & Record<string, unknown>;
+  Relationships: [];
+};
+
 export type Database = {
   public: {
     Tables: {
-      restaurants: { Row: Restaurant; Insert: Partial<Restaurant>; Update: Partial<Restaurant> };
-      menu_categories: { Row: MenuCategory; Insert: Partial<MenuCategory>; Update: Partial<MenuCategory> };
-      menu_items: { Row: MenuItem; Insert: Partial<MenuItem>; Update: Partial<MenuItem> };
-      deals: { Row: Deal; Insert: Partial<Deal>; Update: Partial<Deal> };
-      faqs: { Row: FAQ; Insert: Partial<FAQ>; Update: Partial<FAQ> };
-      knowledge_documents: { Row: KnowledgeDocument; Insert: Partial<KnowledgeDocument>; Update: Partial<KnowledgeDocument> };
-      knowledge_chunks: { Row: KnowledgeChunk; Insert: Partial<KnowledgeChunk> & { embedding?: number[] }; Update: Partial<KnowledgeChunk> };
-      chat_sessions: { Row: ChatSession; Insert: Partial<ChatSession>; Update: Partial<ChatSession> };
-      chat_messages: { Row: ChatMessage; Insert: Partial<ChatMessage>; Update: Partial<ChatMessage> };
-      leads: { Row: Lead; Insert: Partial<Lead>; Update: Partial<Lead> };
-      chatbot_settings: { Row: ChatbotSettings; Insert: Partial<ChatbotSettings>; Update: Partial<ChatbotSettings> };
+      restaurants: SupabaseTable<Restaurant>;
+      menu_categories: SupabaseTable<MenuCategory>;
+      menu_items: SupabaseTable<MenuItem>;
+      deals: SupabaseTable<Deal>;
+      faqs: SupabaseTable<FAQ>;
+      knowledge_documents: SupabaseTable<KnowledgeDocument>;
+      knowledge_chunks: SupabaseTable<KnowledgeChunk, Partial<KnowledgeChunk> & { embedding?: number[] }>;
+      chat_sessions: SupabaseTable<ChatSession>;
+      chat_messages: SupabaseTable<ChatMessage>;
+      leads: SupabaseTable<Lead>;
+      chatbot_settings: SupabaseTable<ChatbotSettings>;
     };
+    Views: Record<string, never>;
     Functions: {
       match_knowledge_chunks: {
         Args: { query_embedding: number[]; match_restaurant_id: string; match_count?: number; similarity_threshold?: number };
         Returns: KnowledgeChunk[];
       };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 };

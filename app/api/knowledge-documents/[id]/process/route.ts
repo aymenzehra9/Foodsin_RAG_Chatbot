@@ -12,7 +12,7 @@ export async function POST(_: Request, { params }: Params) {
   const { data: document, error } = await supabase.from("knowledge_documents").select("*").eq("id", id).single();
   if (error || !document) return jsonError("Knowledge document not found", 404);
 
-  await supabase.from("knowledge_documents").update({ status: "processing" }).eq("id", id);
+  await supabase.from("knowledge_documents").update({ status: "processing" } as never).eq("id", id);
   await supabase.from("knowledge_chunks").delete().eq("document_id", id);
 
   try {
@@ -30,14 +30,14 @@ export async function POST(_: Request, { params }: Params) {
     );
 
     if (rows.length > 0) {
-      const { error: insertError } = await supabase.from("knowledge_chunks").insert(rows);
+      const { error: insertError } = await supabase.from("knowledge_chunks").insert(rows as never);
       if (insertError) throw insertError;
     }
 
-    await supabase.from("knowledge_documents").update({ status: "completed" }).eq("id", id);
+    await supabase.from("knowledge_documents").update({ status: "completed" } as never).eq("id", id);
     return NextResponse.json({ ok: true, chunkCount: rows.length });
   } catch (processError) {
-    await supabase.from("knowledge_documents").update({ status: "failed" }).eq("id", id);
+    await supabase.from("knowledge_documents").update({ status: "failed" } as never).eq("id", id);
     return jsonError(processError instanceof Error ? processError.message : "Embedding generation failed", 500);
   }
 }
