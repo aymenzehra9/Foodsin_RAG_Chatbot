@@ -158,7 +158,7 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
   }
 
   return (
-    <Card className="relative mx-auto grid h-dvh w-full max-w-6xl overflow-hidden rounded-none border-0 md:h-[min(820px,calc(100vh-2rem))] md:grid-cols-[280px_1fr] md:rounded-lg md:border">
+    <Card className="relative mx-auto grid h-full min-h-0 w-full max-w-6xl overflow-hidden rounded-none border-0 md:h-[min(820px,calc(100vh-2rem))] md:grid-cols-[280px_1fr] md:rounded-lg md:border">
       {sessionMenuOpen ? (
         <button
           type="button"
@@ -170,7 +170,7 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
 
       <aside
         className={cn(
-          "absolute inset-y-0 left-0 z-30 flex w-[82vw] max-w-[320px] min-h-0 flex-col bg-primary p-3 text-primary-foreground shadow-2xl transition-transform duration-200 md:static md:z-auto md:w-auto md:max-w-none md:translate-x-0 md:border-r md:shadow-none",
+          "absolute inset-y-0 left-0 z-30 flex min-h-0 w-[88vw] max-w-[320px] flex-col bg-primary p-3 text-primary-foreground shadow-2xl transition-transform duration-200 md:static md:z-auto md:w-auto md:max-w-none md:translate-x-0 md:border-r md:shadow-none",
           sessionMenuOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -240,8 +240,8 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
         </div>
       </aside>
 
-      <section className="flex min-h-0 flex-col bg-background">
-        <div className="flex items-center gap-2 border-b bg-card px-3 py-2 md:px-4 md:py-3">
+      <section className="flex min-h-0 min-w-0 flex-col bg-background">
+        <div className="flex min-h-[58px] items-center gap-2 border-b bg-card px-2 py-2 md:px-4 md:py-3">
           <Button
             type="button"
             variant="outline"
@@ -252,9 +252,16 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
           >
             <Menu className="h-4 w-4" />
           </Button>
+          <Image
+            src="/foods-inn-logo.webp"
+            alt="Foods Inn"
+            width={36}
+            height={36}
+            className="h-9 w-9 shrink-0 rounded-full object-cover md:hidden"
+          />
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-base font-semibold">{activeSession?.title ?? "New chat"}</h2>
-            <p className="truncate text-sm text-muted-foreground">{FOODS_INN_DEMO.phone} - {FOODS_INN_DEMO.city}</p>
+            <h2 className="truncate text-sm font-semibold sm:text-base">{activeSession?.title ?? "New chat"}</h2>
+            <p className="truncate text-xs text-muted-foreground sm:text-sm">{FOODS_INN_DEMO.phone} - {FOODS_INN_DEMO.city}</p>
           </div>
           <Button
             type="button"
@@ -269,7 +276,7 @@ export function ChatWindow({ restaurantId }: { restaurantId: string }) {
         </div>
 
         <div className="flex-1 space-y-4 overflow-y-auto p-3 md:p-4">
-          <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible md:pb-0">
+          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] md:flex-wrap md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
             {quickQuestions.map((question) => (
               <button
                 key={question}

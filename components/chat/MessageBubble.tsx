@@ -55,16 +55,16 @@ export function MessageBubble({ role, content }: { role: "user" | "assistant"; c
     <div className={cn("flex", role === "user" ? "justify-end" : "justify-start")}>
       <div
         className={cn(
-          "max-w-[92%] rounded-lg px-4 py-3 text-sm md:max-w-[82%]",
+          "max-w-[94%] overflow-hidden rounded-lg px-3 py-2.5 text-sm md:max-w-[82%] md:px-4 md:py-3",
           role === "user"
             ? "bg-primary text-primary-foreground"
             : "border bg-card text-card-foreground shadow-sm"
         )}
       >
         {role === "assistant" ? (
-          <div className="space-y-3">{renderFormattedContent(content)}</div>
+          <div className="space-y-3 break-words">{renderFormattedContent(content)}</div>
         ) : (
-          <span className="whitespace-pre-wrap">{content}</span>
+          <span className="whitespace-pre-wrap break-words">{content}</span>
         )}
       </div>
     </div>

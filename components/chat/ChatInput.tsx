@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 export function ChatInput({ onSend, disabled }: { onSend: (message: string) => void; disabled?: boolean }) {
   return (
     <form
-      className="flex gap-2 border-t bg-card p-2 md:p-3"
+      className="flex gap-2 border-t bg-card p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] md:p-3"
       onSubmit={(event) => {
         event.preventDefault();
         const form = event.currentTarget;
